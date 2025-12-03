@@ -1,6 +1,6 @@
 # Windows TUI File Explorer
 
-A lightweight, terminal-based file explorer built iwth Go and [Bubble Tea](https://github.com/charmbracelet/bubbletea).
+A lightweight, terminal-based file explorer built with Go and [Bubble Tea](https://github.com/charmbracelet/bubbletea). Navigate your file system with keyboard shortcuts in a beautiful, responsive TUI (Terminal User Interface).
 
 ![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=flat&logo=windows)
@@ -9,15 +9,18 @@ A lightweight, terminal-based file explorer built iwth Go and [Bubble Tea](https
 ## Features
 
 - 📂 Browse directories with an intuitive interface
+- 📖 **Read-only file viewer** with vim-style navigation
 - ⌨️ Vim-style keyboard navigation (`hjkl`) + arrow keys
 - 🎨 Syntax-highlighted files and folders
 - 📊 Human-readable file sizes
+- 🔢 Line numbers in file viewer
 - 🚀 Fast and lightweight (single executable, no dependencies)
-- 🪟 Native Windows support
+- 🪟 Native Windows support (handles CRLF line endings)
 - 💻 Works in Windows Terminal, PowerShell, and VSCode
 
-## Example
+## Examples
 
+**File Browser:**
 ```
 📁 File Explorer
 Current: C:\Users\YourName\Documents
@@ -29,7 +32,26 @@ Current: C:\Users\YourName\Documents
   📄 readme.md (4.2 KB)
 
 4/5 items
-↑/k: Up | ↓/j: Down | Enter/l: Open | h/Backspace: Back | g: Top | G: Bottom | q: Quit
+↑/k: Up  ↓/j: Down  Enter/l: Open  h/Backspace: Back | g: Top | G: Bottom | q: Quit
+```
+
+**File Viewer:**
+```
+📄 Viewing: main.go
+Lines: 142 | Position: 1
+
+   1 │ package main
+   2 │ 
+   3 │ import (
+   4 │     "fmt"
+   5 │     "os"
+   6 │ 
+   7 │     "github.com/HolyStarGazer/windows-tui-go/ui"
+   8 │     tea "github.com/charmbracelet/bubbletea"
+   9 │ )
+  10 │ 
+
+↑/k: up | ↓/j: down | g: top | G: bottom | Ctrl+u: page up | Ctrl+d: page down | q/Esc: back
 ```
 
 ## Installation
@@ -37,25 +59,25 @@ Current: C:\Users\YourName\Documents
 ### Prerequisites
 
 - Go 1.21 or higher ([Download Go](https://go.dev/download/))
-- Windows Terminal or Powershell (recommended for best experience)
+- Windows Terminal or PowerShell (recommended for best experience)
 
 ### Quick Start
 
 1. **Clone or download this repository**
-    ```bash
-    git clone https://github.com/HolyStarGazer/windows-tui-go.git
-    cd windows-tui-go
-    ```
+   ```bash
+   git clone https://github.com/yourusername/windows-tui-go.git
+   cd windows-tui-go
+   ```
 
 2. **Install dependencies**
-    ```bash
-    go mod tidy
-    ```
+   ```bash
+   go mod tidy
+   ```
 
 3. **Run the application**
-    ```bash
-    go run .
-    ```
+   ```bash
+   go run .
+   ```
 
 ### Build Executable
 
@@ -65,27 +87,47 @@ Create a standalone `.exe` file you can run anywhere:
 go build -o file-explorer.exe
 ```
 
+Now you can run it directly:
+```bash
+.\file-explorer.exe
+```
+
 Or move it to a directory in your PATH to run it from anywhere!
 
 ## Usage
 
 ### Keyboard Shortcuts
 
+#### File Browser Mode
 | Key | Action |
 |-----|--------|
 | `↑` / `k` | Move up |
 | `↓` / `j` | Move down |
-| `Enter` / `l` / `→` | Open directory |
+| `Enter` / `l` / `→` | Open directory or view file |
 | `h` / `←` / `Backspace` | Go to parent directory |
 | `g` | Jump to top |
 | `G` | Jump to bottom |
 | `q` / `Ctrl+C` | Quit |
+
+#### File Viewer Mode
+| Key | Action |
+|-----|--------|
+| `↑` / `k` | Scroll up one line |
+| `↓` / `j` | Scroll down one line |
+| `g` | Jump to top of file |
+| `G` | Jump to bottom of file |
+| `Ctrl+u` | Page up (half screen) |
+| `Ctrl+d` | Page down (half screen) |
+| `q` / `Esc` | Return to file browser |
+| `Ctrl+C` | Quit application |
 
 ### Tips
 
 - **Use Windows Terminal** for the best experience with emoji support and better colors
 - **VSCode Integration**: Works perfectly in VSCode's integrated terminal
 - **Portable**: Copy `file-explorer.exe` to a USB drive and run it on any Windows machine
+- **File Viewing**: Press Enter on any text file to read its contents - works great for `.go`, `.md`, `.txt`, `.json`, `.xml`, and other text files
+- **Large Files**: Files over 10MB cannot be viewed to prevent performance issues
 
 ## Project Structure
 
@@ -94,6 +136,7 @@ windows-tui-go/
 ├── main.go              # Application entry point
 ├── ui/
 │   ├── model.go         # TUI state management and logic
+│   ├── viewer.go        # File viewer component
 │   ├── styles.go        # Lipgloss styling definitions
 │   └── utils.go         # Utility functions
 ├── types/
@@ -129,6 +172,7 @@ The modular structure makes it easy to add features:
 
 ### Planned Features
 
+- [x] File viewer (read-only)
 - [ ] File search/filter
 - [ ] File operations (copy, delete, rename)
 - [ ] File preview pane
@@ -136,6 +180,7 @@ The modular structure makes it easy to add features:
 - [ ] Dual-pane mode
 - [ ] Hidden files toggle
 - [ ] Sort options (name, size, date)
+- [ ] Syntax highlighting in viewer
 
 ## Building for Distribution
 

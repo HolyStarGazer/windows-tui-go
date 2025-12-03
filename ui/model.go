@@ -18,6 +18,8 @@ type Model struct {
 	Width       int
 	Height      int
 	Err         error
+	Mode        ViewMode
+	FileViewer  *FileViewer
 }
 
 // NewModel creates and returns the initial model state
@@ -31,6 +33,7 @@ func NewModel() Model {
 	m := Model{
 		CurrentPath: currentPath,
 		Cursor:      0,
+		Mode:        BrowseMode,
 	}
 	m.loadDirectory()
 	return m
@@ -97,27 +100,62 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.Height = msg.Height
 		m.Width = msg.Width
+		if m.FileViewer != nil {
+			m.FileViewer.Height = msg.Height
+			m.FileViewer.Width = msg.Width
+		}
 		return m, nil
+
 	case tea.KeyMsg:
+		// Handle file viewer mode
+		if m.Mode == FileViewMode {
+			switch msg.String() {
+			case "q", "esc":
+				// Return to browse mode
+				m.Mode = BrowseMode
+				m.FileViewer = nil
+			case "ctrl+c":
+				return m, tea.Quit
+			default:
+				// Pass other keys to the file viewer
+				if m.FileViewer != nil {
+					m.FileViewer.Update(msg)
+				}
+			}
+			return m, nil
+		}
+
+		// Handle browse mode
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m, tea.Quit
+
 		case "up", "k":
 			if m.Cursor > 0 {
 				m.Cursor--
 			}
+
 		case "down", "j":
 			if m.Cursor < len(m.Items)-1 {
 				m.Cursor++
 			}
+
 		case "enter", "l", "right":
 			if len(m.Items) > 0 {
 				selected := m.Items[m.Cursor]
 				if selected.IsDir {
 					m.CurrentPath = selected.Path
 					m.loadDirectory()
+				} else {
+					// Open file viewer
+					viewer := NewFileViewer(selected.Path, selected.Name)
+					viewer.Height = m.Height
+					viewer.Width = m.Width
+					m.FileViewer = &viewer
+					m.Mode = FileViewMode
 				}
 			}
+
 		case "h", "left", "backspace":
 			// Go to parent directory
 			parent := filepath.Dir(m.CurrentPath)
@@ -125,9 +163,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.CurrentPath = parent
 				m.loadDirectory()
 			}
+
 		case "g":
 			// Go to top
 			m.Cursor = 0
+
 		case "G":
 			// Go to bottom
 			if len(m.Items) > 0 {
@@ -141,6 +181,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // View renders the current state of the model
 func (m Model) View() string {
+	// If in file viewer mode, show the file viewer
+	if m.Mode == FileViewMode && m.FileViewer != nil {
+		return m.FileViewer.View()
+	}
+
+	// Otherwise show the file browser
 	if m.Err != nil {
 		return fmt.Sprintf("Error: %v\n\nPress q to quit.", m.Err)
 	}
