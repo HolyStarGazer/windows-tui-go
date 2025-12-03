@@ -58,14 +58,14 @@ Lines: 142 | Position: 1
 
 ### Prerequisites
 
-- Go 1.21 or higher ([Download Go](https://go.dev/download/))
+- Go 1.21 or higher ([Download Go](https://go.dev/dl/))
 - Windows Terminal or PowerShell (recommended for best experience)
 
 ### Quick Start
 
 1. **Clone or download this repository**
    ```bash
-   git clone https://github.com/yourusername/windows-tui-go.git
+   git clone https://github.com/HolyStarGazer/windows-tui-go.git
    cd windows-tui-go
    ```
 
