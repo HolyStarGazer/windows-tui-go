@@ -29,7 +29,7 @@ Current: C:\Users\YourName\Documents
   📄 readme.md (4.2 KB)
 
 4/5 items
-↑/k: up | ↓/j: down | Enter/l: open | h/←: back | g: top | G: bottom | q: quit
+↑/k: Up | ↓/j: Down | Enter/l: Open | h/Backspace: Back | g: Top | G: Bottom | q: Quit
 ```
 
 ## Installation
