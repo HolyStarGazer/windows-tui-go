@@ -1,10 +1,14 @@
 package ui
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"strings"
 
+	"github.com/alecthomas/chroma/v2/formatters"
+	"github.com/alecthomas/chroma/v2/lexers"
+	"github.com/alecthomas/chroma/v2/styles"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -18,21 +22,24 @@ const (
 
 // FileViewer handles file content viewing
 type FileViewer struct {
-	FilePath  string
-	FileName  string
-	Content   []string // Lines of the file
-	ScrollPos int      // Current scroll position
-	Width     int
-	Height    int
-	Err       error
+	FilePath           string
+	FileName           string
+	Content            []string // Lines of the file
+	HighlightedContent []string // Lines with syntax highlighting
+	ScrollPos          int      // Current scroll position
+	Width              int
+	Height             int
+	Err                error
+	UseSyntaxHighlight bool
 }
 
 // NewFileViewer creates a new file viewer for the given file path
 func NewFileViewer(filePath, fileName string) FileViewer {
 	fv := FileViewer{
-		FilePath:  filePath,
-		FileName:  fileName,
-		ScrollPos: 0,
+		FilePath:           filePath,
+		FileName:           fileName,
+		ScrollPos:          0,
+		UseSyntaxHighlight: true,
 	}
 	fv.loadFile()
 	return fv
@@ -66,7 +73,64 @@ func (fv *FileViewer) loadFile() {
 	content = strings.ReplaceAll(content, "\r\n", "\n")
 	// Remove any remaining \r (carriage return) characters
 	content = strings.ReplaceAll(content, "\r", "")
+	// Convert tabs to spaces BEFORE highlighting for consistent display
+	content = strings.ReplaceAll(content, "\t", "    ")
 	fv.Content = strings.Split(content, "\n")
+
+	// Optionally apply syntax highlighting
+	if fv.UseSyntaxHighlight {
+		fv.applySyntaxHighlighting(content)
+	}
+}
+
+// applySyntaxHighlighting applies syntax highlighting to the file content
+func (fv *FileViewer) applySyntaxHighlighting(content string) {
+	// Get lexer based on file extension
+	lexer := lexers.Match(fv.FileName)
+	if lexer == nil {
+		// Fallback to analzing content
+		lexer = lexers.Analyse(content)
+	}
+	if lexer == nil {
+		// If still no lexer found, use plaintext
+		lexer = lexers.Fallback
+	}
+
+	// Use a terminal-friendly style
+	style := styles.Get("monokai")
+	if style == nil {
+		style = styles.Fallback
+	}
+
+	// Create a terminal formatter with 16 colors for better compatibility
+	formatter := formatters.Get("terminal16m")
+	if formatter == nil {
+		formatter = formatters.Fallback
+	}
+
+	// Tokenize and format
+	iterator, err := lexer.Tokenise(nil, content)
+	if err != nil {
+		// If highlighting fails, just use plain content
+		fv.HighlightedContent = fv.Content
+		return
+	}
+
+	// Format to ANSI colors
+	var buf bytes.Buffer
+	err = formatter.Format(&buf, style, iterator)
+	if err != nil {
+		// If formatting fails, just use plain content
+		fv.HighlightedContent = fv.Content
+		return
+	}
+
+	// Split highlighted content into lines
+	highlightedContent := buf.String()
+	// Normalize line endings to match how we handled the plain content
+	highlightedContent = strings.ReplaceAll(highlightedContent, "\r\n", "\n")
+	highlightedContent = strings.ReplaceAll(highlightedContent, "\r", "")
+	fv.HighlightedContent = strings.Split(highlightedContent, "\n")
 }
 
 // Update handles keyboard input for the file viewer
@@ -146,17 +210,25 @@ func (fv FileViewer) View() string {
 	}
 
 	// Display file content with line numbers
+	// Use highlighted content if available, otherwise use plain content
+	contentToDisplay := fv.Content
+	if len(fv.HighlightedContent) > 0 && fv.UseSyntaxHighlight {
+		contentToDisplay = fv.HighlightedContent
+	}
+
 	for i := visibleStart; i < visibleEnd; i++ {
 		lineNum := fmt.Sprintf("%4d │ ", i+1)
-		line := fv.Content[i]
+		var line string
 
-		// Convert tabs to spaces for consistent display
-		line = strings.ReplaceAll(line, "\t", "    ")
+		// Make sure we don't go out of bounds
+		if i < len(contentToDisplay) {
+			line = contentToDisplay[i]
+		}
 
 		// Truncate long lines if needed
-		if len(line) > fv.Width-10 {
-			line = line[:fv.Width-13] + "..."
-		}
+		// if fv.Width > 15 && len(line) > fv.Width-10 {
+		// 	line = line[:fv.Width-13] + "..."
+		// }
 
 		b.WriteString(lineNum + line + "\n")
 	}
