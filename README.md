@@ -10,15 +10,16 @@ A lightweight, terminal-based file explorer built with Go and [Bubble Tea](https
 
 - 📂 Browse directories with an intuitive interface
 - 📖 **Read-only file viewer** with vim-style navigation
+- 🎨 **Syntax highlighting** for 200+ languages (Go, Python, JS, Java, C/C++, Rust, and more)
 - ⌨️ Vim-style keyboard navigation (`hjkl`) + arrow keys
-- 🎨 Syntax-highlighted files and folders
+- 🌈 Color-coded files and folders in browser
 - 📊 Human-readable file sizes
 - 🔢 Line numbers in file viewer
 - 🚀 Fast and lightweight (single executable, no dependencies)
 - 🪟 Native Windows support (handles CRLF line endings)
 - 💻 Works in Windows Terminal, PowerShell, and VSCode
 
-## Examples
+## Screenshots
 
 **File Browser:**
 ```
@@ -35,10 +36,10 @@ Current: C:\Users\YourName\Documents
 ↑/k: Up  ↓/j: Down  Enter/l: Open  h/Backspace: Back | g: Top | G: Bottom | q: Quit
 ```
 
-**File Viewer:**
+**File Viewer (with Syntax Highlighting):**
 ```
 📄 Viewing: main.go
-Lines: 142 | Position: 1
+Lines: 17 | Position: 1
 
    1 │ package main
    2 │ 
@@ -46,26 +47,34 @@ Lines: 142 | Position: 1
    4 │     "fmt"
    5 │     "os"
    6 │ 
-   7 │     "github.com/HolyStarGazer/windows-tui-go/ui"
-   8 │     tea "github.com/charmbracelet/bubbletea"
+   7 │     tea "github.com/charmbracelet/bubbletea"
+   8 │     "github.com/HolyStarGazer/windows-tui-go/ui"
    9 │ )
   10 │ 
+  11 │ func main() {
+  12 │     p := tea.NewProgram(ui.NewModel(), tea.WithAltScreen())
+  13 │     if _, err := p.Run(); err != nil {
+  14 │         fmt.Printf("Error: %v\n", err)
+  15 │         os.Exit(1)
+  16 │     }
+  17 │ }
 
 ↑/k: up | ↓/j: down | g: top | G: bottom | Ctrl+u: page up | Ctrl+d: page down | q/Esc: back
 ```
+*Note: Keywords, strings, and comments appear in color in the actual terminal*
 
 ## Installation
 
 ### Prerequisites
 
-- Go 1.21 or higher ([Download Go](https://go.dev/dl/))
+- Go 1.21 or higher ([Download Go](https://go.dev/download/))
 - Windows Terminal or PowerShell (recommended for best experience)
 
 ### Quick Start
 
 1. **Clone or download this repository**
    ```bash
-   git clone https://github.com/HolyStarGazer/windows-tui-go.git
+   git clone https://github.com/yourusername/windows-tui-go.git
    cd windows-tui-go
    ```
 
@@ -123,11 +132,12 @@ Or move it to a directory in your PATH to run it from anywhere!
 
 ### Tips
 
-- **Use Windows Terminal** for the best experience with emoji support and better colors
+- **Use Windows Terminal** for the best experience with emoji support and syntax highlighting colors
 - **VSCode Integration**: Works perfectly in VSCode's integrated terminal
 - **Portable**: Copy `file-explorer.exe` to a USB drive and run it on any Windows machine
-- **File Viewing**: Press Enter on any text file to read its contents - works great for `.go`, `.md`, `.txt`, `.json`, `.xml`, and other text files
+- **File Viewing**: Press Enter on any text file to read its contents with automatic syntax highlighting - works great for `.go`, `.py`, `.js`, `.java`, `.c`, `.cpp`, `.md`, `.json`, `.xml`, and 200+ more file types
 - **Large Files**: Files over 10MB cannot be viewed to prevent performance issues
+- **Syntax Colors**: The viewer uses the Monokai theme - keywords, strings, comments, and more are automatically colorized
 
 ## Project Structure
 
@@ -157,6 +167,7 @@ This project uses the **Elm Architecture** pattern via [Bubble Tea](https://gith
 
 - **[Bubble Tea](https://github.com/charmbracelet/bubbletea)** - TUI framework
 - **[Lipgloss](https://github.com/charmbracelet/lipgloss)** - Style and layout library
+- **[Chroma](https://github.com/alecthomas/chroma)** - Syntax highlighting for 200+ languages
 - **Go Standard Library** - File system operations
 
 ## Development
@@ -173,6 +184,7 @@ The modular structure makes it easy to add features:
 ### Planned Features
 
 - [x] File viewer (read-only)
+- [x] Syntax highlighting in viewer
 - [ ] File search/filter
 - [ ] File operations (copy, delete, rename)
 - [ ] File preview pane
@@ -180,7 +192,7 @@ The modular structure makes it easy to add features:
 - [ ] Dual-pane mode
 - [ ] Hidden files toggle
 - [ ] Sort options (name, size, date)
-- [ ] Syntax highlighting in viewer
+- [ ] Custom color themes
 
 ## Building for Distribution
 
