@@ -150,8 +150,8 @@ Or move it to a directory in your PATH to run it from anywhere!
 | `:set nowrap` | Disable line wrapping |
 | `:set syntax` | Enable syntax highlighting |
 | `:set nosyntax` | Disable syntax highlighting |
-| `:wrap` or `:w` | Toggle line wrapping |
-| `:syntax` or `:s` | Toggle syntax highlighting |
+| `:wrap` | Toggle line wrapping |
+| `:syntax` | Toggle syntax highlighting |
 | `:search <term>` | Search for text |
 | `:/<pattern>` | Quick search (vim-style) |
 | `:n` or `:next` | Jump to next match |
