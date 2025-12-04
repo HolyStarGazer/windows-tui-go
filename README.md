@@ -62,7 +62,7 @@ Lines: 17 | Position: 1 | Wrap: OFF
   16 │     }
   17 │ }
 
-Founc 3 match(es) - n: next, N: prev
+Found 3 match(es) - n: next, N: prev
 ↑/k: up | ↓/j: down | g: top | G: bottom | Ctrl+u: page up | Ctrl+d: page down | q/Esc: back
 ```
 *Note: Keywords appear in color, and search terms are highlighted with yellow background*
