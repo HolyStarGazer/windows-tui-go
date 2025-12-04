@@ -134,7 +134,7 @@ func (fv *FileViewer) executeCommand(cmd string) {
 		}
 
 	case "help", "h":
-		fv.StatusMessage = "Commands: :set [wrap|nowrap] | :set [syntax|nosyntax] | :help"
+		fv.StatusMessage = "Commands: :set [wrap|nowrap] | :set [syntax|nosyntax] | :/ or :search <term> | :help"
 
 	case "n", "next":
 		fv.nextMatch()
