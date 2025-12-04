@@ -10,11 +10,14 @@ A lightweight, terminal-based file explorer built with Go and [Bubble Tea](https
 
 - 📂 Browse directories with an intuitive interface
 - 📖 **Read-only file viewer** with vim-style navigation
+- ⌨️ **Vim-style command mode** (`:` to enter commands)
+- 🔍 **Full-text search** with highlighted matches and navigation
 - 🎨 **Syntax highlighting** for 200+ languages (Go, Python, JS, Java, C/C++, Rust, and more)
-- ⌨️ Vim-style keyboard navigation (`hjkl`) + arrow keys
+- ⚡ Vim-style keyboard navigation (`hjkl`) + arrow keys
 - 🌈 Color-coded files and folders in browser
 - 📊 Human-readable file sizes
 - 🔢 Line numbers in file viewer
+- 🔄 Optional line wrapping (toggle via command)
 - 🚀 Fast and lightweight (single executable, no dependencies)
 - 🪟 Native Windows support (handles CRLF line endings)
 - 💻 Works in Windows Terminal, PowerShell, and VSCode
@@ -36,10 +39,10 @@ Current: C:\Users\YourName\Documents
 ↑/k: Up  ↓/j: Down  Enter/l: Open  h/Backspace: Back | g: Top | G: Bottom | q: Quit
 ```
 
-**File Viewer (with Syntax Highlighting):**
+**File Viewer (with Syntax Highlighting and Search):**
 ```
 📄 Viewing: main.go
-Lines: 17 | Position: 1
+Lines: 17 | Position: 1 | Wrap: OFF
 
    1 │ package main
    2 │ 
@@ -59,22 +62,29 @@ Lines: 17 | Position: 1
   16 │     }
   17 │ }
 
+Founc 3 match(es) - n: next, N: prev
 ↑/k: up | ↓/j: down | g: top | G: bottom | Ctrl+u: page up | Ctrl+d: page down | q/Esc: back
 ```
-*Note: Keywords, strings, and comments appear in color in the actual terminal*
+*Note: Keywords appear in color, and search terms are highlighted with yellow background*
+
+**Command Mode:**
+```
+:search func_
+```
+*Type commands after pressing `:` - try :help for available commands*
 
 ## Installation
 
 ### Prerequisites
 
-- Go 1.21 or higher ([Download Go](https://go.dev/download/))
+- Go 1.21 or higher ([Download Go](https://go.dev/dl/))
 - Windows Terminal or PowerShell (recommended for best experience)
 
 ### Quick Start
 
 1. **Clone or download this repository**
    ```bash
-   git clone https://github.com/yourusername/windows-tui-go.git
+   git clone https://github.com/HolyStarGazer/windows-tui-go.git
    cd windows-tui-go
    ```
 
@@ -127,8 +137,28 @@ Or move it to a directory in your PATH to run it from anywhere!
 | `G` | Jump to bottom of file |
 | `Ctrl+u` | Page up (half screen) |
 | `Ctrl+d` | Page down (half screen) |
+| `n` | Next search match |
+| `N` | Previous search match |
+| `:` | Enter command mode |
 | `q` / `Esc` | Return to file browser |
 | `Ctrl+C` | Quit application |
+
+#### Command Mode (press `:` to enter)
+| Command | Action |
+|---------|--------|
+| `:set wrap` | Enable line wrapping |
+| `:set nowrap` | Disable line wrapping |
+| `:set syntax` | Enable syntax highlighting |
+| `:set nosyntax` | Disable syntax highlighting |
+| `:wrap` or `:w` | Toggle line wrapping |
+| `:syntax` or `:s` | Toggle syntax highlighting |
+| `:search <term>` | Search for text |
+| `:/<pattern>` | Quick search (vim-style) |
+| `:n` or `:next` | Jump to next match |
+| `:N` or `:prev` | Jump to previous match |
+| `:clear` | Clear search highlighting |
+| `:help` or `:h` | Show available commands |
+| `Esc` | Cancel command |
 
 ### Tips
 
@@ -138,6 +168,50 @@ Or move it to a directory in your PATH to run it from anywhere!
 - **File Viewing**: Press Enter on any text file to read its contents with automatic syntax highlighting - works great for `.go`, `.py`, `.js`, `.java`, `.c`, `.cpp`, `.md`, `.json`, `.xml`, and 200+ more file types
 - **Large Files**: Files over 10MB cannot be viewed to prevent performance issues
 - **Syntax Colors**: The viewer uses the Monokai theme - keywords, strings, comments, and more are automatically colorized
+- **Command Mode**: Press `:` to access all viewer options - try `:help` to see available commands
+- **Quick Search**: Use `:/pattern` to quickly search for text, then `n` and `N` to navigate through matches
+- **Line Wrapping**: Toggle with `:wrap` - useful for long lines of code
+- **Persistent Search**: Search highlighting stays active as you scroll - use `:clear` to remove
+
+### Command Mode Examples
+
+
+**Searching for text:**
+```
+Press :
+Type /main
+→ All instances of "main" highlighted in yellow
+→ Press n to jump to next match
+→ Press N to jump to previous match
+```
+
+**Toggling options:**
+```
+:wrap          → Toggle line wrapping on/off
+:syntax        → Toggle syntax highlighting on/off
+:set nowrap    → Explicitly disable wrapping
+:set syntax    → Explicitly enable syntax highlighting
+```
+
+
+**Getting help:**
+```
+:help          → Show all available commands
+```
+
+**Clearing search:**
+```
+:clear         → Remove search highlighting
+```
+
+**Example session:**
+1. Open a Go file: `file-explorer.exe`
+2. Navigate to a `.go` file and press Enter
+3. Search for functions: `:/func`
+4. Navigate results: `n`, `n`, `N`
+5. Toggle wrapping: `:wrap`
+6. Check available commands: `:help`
+7. Return to browser: `Esc` or `q`
 
 ## Project Structure
 
@@ -185,14 +259,18 @@ The modular structure makes it easy to add features:
 
 - [x] File viewer (read-only)
 - [x] Syntax highlighting in viewer
-- [ ] File search/filter
+- [x] Vim-style command mode
+- [x] Full-text search with highlighting
+- [ ] Jump to line number (`:goto <line>` or `:<number>`)
 - [ ] File operations (copy, delete, rename)
 - [ ] File preview pane
 - [ ] Bookmarks for quick navigation
 - [ ] Dual-pane mode
 - [ ] Hidden files toggle
 - [ ] Sort options (name, size, date)
-- [ ] Custom color themes
+- [ ] Custom color themes (`:theme <name>`)
+- [ ] Search history
+- [ ] Regular expression search
 
 ## Building for Distribution
 
